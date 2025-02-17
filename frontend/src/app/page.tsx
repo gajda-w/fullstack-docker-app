@@ -1,10 +1,11 @@
-import { Suspense } from "react";
-import { PepperList, PepperListSkeleton } from "../../components/pepper-list";
+import { AddPepperForm } from "./forms/add-pepper-form";
+import { PeppersList } from "./components/peppers-list";
 
 export default async function Home() {
   return (
-    <Suspense fallback={<PepperListSkeleton />}>
-      <PepperList />
-    </Suspense>
+    <div className="space-y-6">
+      <PeppersList />
+      <AddPepperForm />
+    </div>
   );
 }

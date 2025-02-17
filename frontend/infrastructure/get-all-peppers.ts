@@ -6,7 +6,9 @@ export const getAllPeppers = async (): Promise<{
   error: Error | null;
 }> => {
   try {
-    const response = await fetch("http://localhost:8000/peppers");
+    const response = await fetch("http://localhost:8000/peppers", {
+      next: { tags: ["peppers"] },
+    });
 
     if (!response.ok) {
       throw new Error(`HTTP error! Status: ${response.status}`);
@@ -15,8 +17,6 @@ export const getAllPeppers = async (): Promise<{
     const responseJson = await response.json();
 
     const data = pepperSchema.parse(responseJson);
-
-    await new Promise((resolve) => setTimeout(resolve, 2000));
 
     return { data, error: null };
   } catch (error: unknown) {
