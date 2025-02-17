@@ -5,21 +5,68 @@ services:
       dockerfile: Dockerfile
     ports:
       - "8000:8000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+    environment:
+      - DATABASE_URL=postgres://postgres:mypassword@postgres:5432/postgres
+      - DATABASE_USER=postgres
+      - DATABASE_PASSWORD=mypassword
     networks:
       - app-network
+
+  migration:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      - DATABASE_URL=postgres://postgres:mypassword@postgres:5432/postgres
+    networks:
+      - app-network
+    command: >
+      sh -c "deno run -A --node-modules-dir npm:drizzle-kit generate &&
+             deno run -A --node-modules-dir npm:drizzle-kit push"
 
   frontend:
     build:
       context: ./frontend
       dockerfile: Dockerfile
+      args:
+        - NEXT_PUBLIC_BACKEND_URL=http://backend:8000
     ports:
       - "3000:3000"
     depends_on:
       - backend
     environment:
-      - NEXT_PUBLIC_BACKEND_URL=http://backend:4000
+      - NEXT_PUBLIC_BACKEND_URL=http://backend:8000
     networks:
       - app-network
+
+  postgres:
+    image: postgres:15
+    restart: always
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: mypassword
+      POSTGRES_DB: postgres
+    networks:
+      - app-network
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d postgres"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+volumes:
+  postgres_data:
 
 networks:
   app-network:

@@ -1,4 +1,4 @@
-import { Pepper } from "../objects/Pepper";
+import { Pepper } from "../objects/pepper";
 import { z } from "zod";
 
 export const getAllPeppers = async (): Promise<{
@@ -6,7 +6,12 @@ export const getAllPeppers = async (): Promise<{
   error: Error | null;
 }> => {
   try {
-    const response = await fetch("http://localhost:8000/peppers");
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/peppers` || "",
+      {
+        next: { tags: ["peppers"] },
+      }
+    );
 
     if (!response.ok) {
       throw new Error(`HTTP error! Status: ${response.status}`);
@@ -15,8 +20,6 @@ export const getAllPeppers = async (): Promise<{
     const responseJson = await response.json();
 
     const data = pepperSchema.parse(responseJson);
-
-    await new Promise((resolve) => setTimeout(resolve, 2000));
 
     return { data, error: null };
   } catch (error: unknown) {

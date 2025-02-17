@@ -1,4 +1,4 @@
-import { Pepper } from "../objects/Pepper";
+import { Pepper } from "../../../objects/pepper";
 
 export const PepperCard = ({ pepper }: { pepper: Pepper }) => {
   return (
@@ -14,13 +14,16 @@ export const PepperCard = ({ pepper }: { pepper: Pepper }) => {
       </span>
       <div className="mt-3 text-gray-600">
         <p>
-          <strong className="text-green-700">Color:</strong> {pepper.color}
+          <strong className="text-green-700">Color:</strong>
+          {pepper.color}
         </p>
         <p>
-          <strong className="text-green-700">Height:</strong> {pepper.height}
+          <strong className="text-green-700">Height:</strong>
+          {pepper.height}
         </p>
         <p>
-          <strong className="text-green-700">Yield:</strong> {pepper.yield}
+          <strong className="text-green-700">Yield:</strong>
+          {pepper.yield}
         </p>
       </div>
     </div>

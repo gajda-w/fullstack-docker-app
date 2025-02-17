@@ -1,32 +1,6 @@
 import { Hono } from "hono";
 import { cors } from "hono/cors";
-
-const peppers = [
-  {
-    id: 1,
-    name: "Habanero",
-    type: "Hot",
-    color: "Orange",
-    height: "60 cm",
-    yield: "200 fruits",
-  },
-  {
-    id: 2,
-    name: "Cayenne",
-    type: "Hot",
-    color: "Red",
-    height: "75 cm",
-    yield: "150 fruits",
-  },
-  {
-    id: 3,
-    name: "Jalapeno",
-    type: "Medium",
-    color: "Green",
-    height: "80 cm",
-    yield: "100 fruits",
-  },
-];
+import { getAllPeppers, insertPepper } from "./src/db/db.ts";
 
 const app = new Hono();
 
@@ -41,8 +15,30 @@ app.get("/", (c) => {
   return c.text("Hello Hono!");
 });
 
-app.get("/peppers", (c) => {
+app.get("/peppers", async (c) => {
+  const peppers = await getAllPeppers();
   return c.json(peppers);
 });
 
-Deno.serve(app.fetch, { port: 4000 });
+app.post("/peppers", async (ctx) => {
+  try {
+    const body = await ctx.req.json();
+
+    if (
+      !body.name ||
+      !body.type ||
+      !body.color ||
+      !body.height ||
+      !body.yield
+    ) {
+      return ctx.json({ error: "Missing required fields" }, 400);
+    }
+
+    const newPepper = await insertPepper(body);
+    return ctx.json(newPepper, 201);
+  } catch (error) {
+    return ctx.json({ error: error.message }, 500);
+  }
+});
+
+Deno.serve(app.fetch);
