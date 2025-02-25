@@ -2,6 +2,7 @@ import { drizzle } from "drizzle-orm/node-postgres";
 import { peppers as pepperSchema } from "./schema.ts";
 import { InferInsertModel } from "drizzle-orm";
 import pg from "pg";
+import { eq } from "drizzle-orm";
 
 const { Pool } = pg;
 
@@ -28,4 +29,12 @@ export async function insertPepper(
     type: pepperObj.type,
     yield: pepperObj.yield,
   });
+}
+
+export async function getPepperById(id: number) {
+  return await db
+    .select()
+    .from(pepperSchema)
+    .where(eq(pepperSchema.id, id))
+    .limit(1);
 }

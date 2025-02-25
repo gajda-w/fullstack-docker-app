@@ -1,6 +1,6 @@
 import { Hono } from "hono";
 import { cors } from "hono/cors";
-import { getAllPeppers, insertPepper } from "./src/db/db.ts";
+import { getAllPeppers, getPepperById, insertPepper } from "./src/db/db.ts";
 
 const app = new Hono();
 
@@ -13,6 +13,16 @@ app.use(
 
 app.get("/", (c) => {
   return c.text("Hello Hono!");
+});
+
+app.get("/peppers/:id", async (c) => {
+  const id = Number(c.req.param("id"));
+  if (isNaN(id)) return c.json({ error: "Invalid ID" }, 400);
+
+  const pepper = await getPepperById(id);
+  if (!pepper.length) return c.json({ error: "Pepper not found" }, 404);
+
+  return c.json(pepper[0]);
 });
 
 app.get("/peppers", async (c) => {
