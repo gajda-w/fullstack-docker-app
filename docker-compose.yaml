@@ -4,7 +4,7 @@ services:
       context: ./backend
       dockerfile: Dockerfile
     ports:
-      - "8000:8000"
+      - "4000:4000"
     depends_on:
       postgres:
         condition: service_healthy
@@ -36,13 +36,13 @@ services:
       context: ./frontend
       dockerfile: Dockerfile
       args:
-        - NEXT_PUBLIC_BACKEND_URL=http://backend:8000
+        - NEXT_PUBLIC_BACKEND_URL=http://backend:4000
     ports:
       - "3000:3000"
     depends_on:
       - backend
     environment:
-      - NEXT_PUBLIC_BACKEND_URL=http://backend:8000
+      - NEXT_PUBLIC_BACKEND_URL=http://backend:4000
     networks:
       - app-network
 

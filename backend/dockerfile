@@ -16,6 +16,6 @@ WORKDIR /app
 
 COPY --from=builder /app /app
 
-EXPOSE 8000
+EXPOSE 4000
 
 CMD ["deno", "run", "--allow-net", "--allow-read", "--allow-env", "--watch", "main.ts"]

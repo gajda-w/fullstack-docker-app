@@ -51,4 +51,4 @@ app.post("/peppers", async (ctx) => {
   }
 });
 
-Deno.serve(app.fetch);
+Deno.serve({ port: 4000 }, app.fetch);
